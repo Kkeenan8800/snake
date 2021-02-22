@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#canvas{
+    position: absolute;
+    left: 0px; top: 0px;
+}
+
+</style>
+
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    let x = 0;
+    let y = 0;
+    let dX = 1;
+    let dY = 0;
+
+    let size = 50;
+    let speed = 5;
+
+    const canvas = document.getElementById("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const c = canvas.getContext("2d");
+
+    //c.fillRect(0,0,w,h);
+
+    window.requestAnimationFrame(draw);
+
+    function draw(){
+        // clear screen
+        c.fillStyle = "black";
+        c.fillRect(0,0,w,h);
+
+        // change position
+        x += dX * speed;
+        y += dY * speed;
+
+        // CHECK BORDER
+        // check x
+        if (x < -size) x = w;
+        if (x > w) x = -size;
+
+        // check y
+        if (y < -size) y = h;
+        if (y > h) y = -size;
+
+        // draw snake
+        c.fillStyle = `rgb(0,${50 + x * (155/w)},${150 + y * (105/h)})`
+        c.fillRect(x,y,size,size);
+
+        window.requestAnimationFrame(draw);
+    }
+
+    // CONTROLS
+    window.addEventListener("keydown", (e) => {
+        switch(e.key){
+            case "ArrowLeft":
+                dX = -1;
+                dY = 0;
+                break;
+            case "ArrowUp":
+                dX = 0;
+                dY = -1;
+                break;
+            case "ArrowRight":
+                dX = 1;
+                dY = 0;
+                break;
+            case "ArrowDown":
+                dX = 0;
+                dY = 1;
+        }
+    })
+
+
+    // for (let i = 0; i < w; i += 100){
+    //     for (let j = 0; j < h; j += 100){
+    //         c.fillStyle = `rgb(0,${50 + i * (155/w)},${150 + j * (105/h)})`
+    //         c.fillRect(i,j,100,100)
+    //     }
+    // }
+
+
+
+</script>
+
+</body>
+</html>
