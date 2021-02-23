@@ -2,35 +2,95 @@
 <html>
 <head>
 <style>
-#canvas{
+/* #canvas{
     position: absolute;
     left: 0px; top: 0px;
-}
+} */
 
 </style>
 
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<!-- <canvas id="canvas"></canvas> -->
 
 <script>
 
     let w = window.innerWidth;
     let h = window.innerHeight;
 
-    let x = 0;
-    let y = 0;
-    let dX = 1;
-    let dY = 0;
+    const snake = {
+        setup: () => {
+            const canvas = document.createElement("canvas");
+            // style canvas
+            canvas.style = "position: absolute; top: 0px; left: 0px";
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // add element in body html tag
+            document.body.appendChild(canvas);
 
-    let size = 50;
-    let speed = 5;
+            // get context, add to object
+            snake.c = canvas.getContext("2d");
+        },
+        //c: this.setup(),
+        x: 0,
+        y: 0,
+        dX: 1,
+        dY: 0,
+        size: 50,
+        speed: 5,
+        move: () => {
+            snake.x += snake.dX*snake.speed;
+            snake.y += snake.dY*snake.speed;
+            snake.check_border(snake.x, snake.y, snake.size);
+        },
+        check_border: (x,y,s) => {
+            // check x
+            if (x < -s) snake.x = w;
+            if (x > w) snake.x = -s;
 
-    const canvas = document.getElementById("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const c = canvas.getContext("2d");
+            // check y
+            if (y < -s) snake.y = h;
+            if (y > h) snake.y = -s;
+        },
+        render: (c) => {
+            let x = snake.x;
+            let y = snake.y;
+            size = snake.size;
+            snake.c.fillStyle = 'black';
+            snake.c.fillRect(0,0,w,h);
+            snake.c.fillStyle = `rgb(0,${50 + x * (155/w)},${150 + y * (105/h)})`
+            snake.c.fillRect(x,y,size,size);
+        },
+    }
+
+snake.setup();
+
+    // CONTROLS
+    window.addEventListener("keydown", (e) => {
+        switch(e.key){
+            case "ArrowLeft":
+                snake.dX = -1;
+                snake.dY = 0;
+                break;
+            case "ArrowUp":
+                snake.dX = 0;
+                snake.dY = -1;
+                break;
+            case "ArrowRight":
+                snake.dX = 1;
+                snake.dY = 0;
+                break;
+            case "ArrowDown":
+                snake.dX = 0;
+                snake.dY = 1;
+        }
+    })
+
+    // const canvas = document.getElementById("canvas");
+    // canvas.width = w;
+    // canvas.height = h;
+    // const c = canvas.getContext("2d");
 
     //c.fillRect(0,0,w,h);
 
@@ -38,49 +98,19 @@
 
     function draw(){
         // clear screen
-        c.fillStyle = "black";
-        c.fillRect(0,0,w,h);
+        // c.fillStyle = "black";
+        // c.fillRect(0,0,w,h);
 
         // change position
-        x += dX * speed;
-        y += dY * speed;
-
-        // CHECK BORDER
-        // check x
-        if (x < -size) x = w;
-        if (x > w) x = -size;
-
-        // check y
-        if (y < -size) y = h;
-        if (y > h) y = -size;
+        snake.move();
 
         // draw snake
-        c.fillStyle = `rgb(0,${50 + x * (155/w)},${150 + y * (105/h)})`
-        c.fillRect(x,y,size,size);
+        snake.render(snake.c);
 
         window.requestAnimationFrame(draw);
     }
 
-    // CONTROLS
-    window.addEventListener("keydown", (e) => {
-        switch(e.key){
-            case "ArrowLeft":
-                dX = -1;
-                dY = 0;
-                break;
-            case "ArrowUp":
-                dX = 0;
-                dY = -1;
-                break;
-            case "ArrowRight":
-                dX = 1;
-                dY = 0;
-                break;
-            case "ArrowDown":
-                dX = 0;
-                dY = 1;
-        }
-    })
+
 
 
     // for (let i = 0; i < w; i += 100){
