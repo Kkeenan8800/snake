@@ -16,14 +16,14 @@
 
 <script>
 
-    let w = window.innerWidth;
-    let h = window.innerHeight;
+    // let w = window.innerWidth;
+    // let h = window.innerHeight;
 
-    const snake = {
+const snake = {
         setup: () => {
             const canvas = document.createElement("canvas");
             // style canvas
-            canvas.style = "position: absolute; top: 0px; left: 0px";
+            canvas.style = "position: absolute; top: 0px; left: 0px; z-index: 100;";
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             // add element in body html tag
@@ -31,6 +31,39 @@
 
             // get context, add to object
             snake.c = canvas.getContext("2d");
+
+            // CONTROLS
+            window.addEventListener("keydown", (e) => {
+                switch(e.key){
+                    case "ArrowLeft":
+                    case "a":
+                        snake.dX = -1;
+                        snake.dY = 0;
+                        break;
+                    case "ArrowUp":
+                    case "w":
+                        snake.dX = 0;
+                        snake.dY = -1;
+                        break;
+                    case "ArrowRight":
+                    case "d":
+                        snake.dX = 1;
+                        snake.dY = 0;
+                        break;
+                    case "ArrowDown":
+                    case "s":
+                        snake.dX = 0;
+                        snake.dY = 1;
+                        break;
+                }
+            })
+            snake.draw = function(){
+                snake.move();
+                // draw snake
+                snake.render(snake.c);
+                window.requestAnimationFrame(snake.draw);
+            }
+            window.requestAnimationFrame(snake.draw);
         },
         //c: this.setup(),
         x: 0,
@@ -39,6 +72,8 @@
         dY: 0,
         size: 50,
         speed: 5,
+        w: window.innerWidth,
+        h: window.innerHeight,
         move: () => {
             snake.x += snake.dX*snake.speed;
             snake.y += snake.dY*snake.speed;
@@ -46,81 +81,25 @@
         },
         check_border: (x,y,s) => {
             // check x
-            if (x < -s) snake.x = w;
-            if (x > w) snake.x = -s;
+            if (x < -s) snake.x = snake.w;
+            if (x > snake.w) snake.x = -s;
 
             // check y
-            if (y < -s) snake.y = h;
-            if (y > h) snake.y = -s;
+            if (y < -s) snake.y = snake.h;
+            if (y > snake.h) snake.y = -s;
         },
         render: (c) => {
             let x = snake.x;
             let y = snake.y;
             size = snake.size;
             snake.c.fillStyle = 'black';
-            snake.c.fillRect(0,0,w,h);
-            snake.c.fillStyle = `rgb(0,${50 + x * (155/w)},${150 + y * (105/h)})`
+            snake.c.clearRect(0,0,window.innerWidth,window.innerHeight);
+            snake.c.fillStyle = `rgb(0,${50 + x * (155/snake.w)},${150 + y * (105/snake.h)})`
             snake.c.fillRect(x,y,size,size);
         },
-    }
+}
 
 snake.setup();
-
-    // CONTROLS
-    window.addEventListener("keydown", (e) => {
-        switch(e.key){
-            case "ArrowLeft":
-                snake.dX = -1;
-                snake.dY = 0;
-                break;
-            case "ArrowUp":
-                snake.dX = 0;
-                snake.dY = -1;
-                break;
-            case "ArrowRight":
-                snake.dX = 1;
-                snake.dY = 0;
-                break;
-            case "ArrowDown":
-                snake.dX = 0;
-                snake.dY = 1;
-        }
-    })
-
-    // const canvas = document.getElementById("canvas");
-    // canvas.width = w;
-    // canvas.height = h;
-    // const c = canvas.getContext("2d");
-
-    //c.fillRect(0,0,w,h);
-
-    window.requestAnimationFrame(draw);
-
-    function draw(){
-        // clear screen
-        // c.fillStyle = "black";
-        // c.fillRect(0,0,w,h);
-
-        // change position
-        snake.move();
-
-        // draw snake
-        snake.render(snake.c);
-
-        window.requestAnimationFrame(draw);
-    }
-
-
-
-
-    // for (let i = 0; i < w; i += 100){
-    //     for (let j = 0; j < h; j += 100){
-    //         c.fillStyle = `rgb(0,${50 + i * (155/w)},${150 + j * (105/h)})`
-    //         c.fillRect(i,j,100,100)
-    //     }
-    // }
-
-
 
 </script>
 
