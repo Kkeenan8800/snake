@@ -2,95 +2,104 @@
 <html>
 <head>
 <style>
-#canvas{
+/* #canvas{
     position: absolute;
     left: 0px; top: 0px;
-}
+} */
 
 </style>
 
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<!-- <canvas id="canvas"></canvas> -->
 
 <script>
 
-    let w = window.innerWidth;
-    let h = window.innerHeight;
+    // let w = window.innerWidth;
+    // let h = window.innerHeight;
 
-    let x = 0;
-    let y = 0;
-    let dX = 1;
-    let dY = 0;
+const snake = {
+        setup: () => {
+            const canvas = document.createElement("canvas");
+            // style canvas
+            canvas.style = "position: absolute; top: 0px; left: 0px; z-index: 100;";
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // add element in body html tag
+            document.body.appendChild(canvas);
 
-    let size = 50;
-    let speed = 5;
+            // get context, add to object
+            snake.c = canvas.getContext("2d");
 
-    const canvas = document.getElementById("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const c = canvas.getContext("2d");
+            // CONTROLS
+            window.addEventListener("keydown", (e) => {
+                switch(e.key){
+                    case "ArrowLeft":
+                    case "a":
+                        snake.dX = -1;
+                        snake.dY = 0;
+                        break;
+                    case "ArrowUp":
+                    case "w":
+                        snake.dX = 0;
+                        snake.dY = -1;
+                        break;
+                    case "ArrowRight":
+                    case "d":
+                        snake.dX = 1;
+                        snake.dY = 0;
+                        break;
+                    case "ArrowDown":
+                    case "s":
+                        snake.dX = 0;
+                        snake.dY = 1;
+                        break;
+                }
+            })
+            snake.draw = function(){
+                snake.move();
+                // draw snake
+                snake.render(snake.c);
+                window.requestAnimationFrame(snake.draw);
+            }
+            window.requestAnimationFrame(snake.draw);
+        },
+        //c: this.setup(),
+        x: 0,
+        y: 0,
+        dX: 1,
+        dY: 0,
+        size: 50,
+        speed: 5,
+        w: window.innerWidth,
+        h: window.innerHeight,
+        move: () => {
+            snake.x += snake.dX*snake.speed;
+            snake.y += snake.dY*snake.speed;
+            snake.check_border(snake.x, snake.y, snake.size);
+        },
+        check_border: (x,y,s) => {
+            // check x
+            if (x < -s) snake.x = snake.w;
+            if (x > snake.w) snake.x = -s;
 
-    //c.fillRect(0,0,w,h);
+            // check y
+            if (y < -s) snake.y = snake.h;
+            if (y > snake.h) snake.y = -s;
+        },
+        render: (c) => {
+            let x = snake.x;
+            let y = snake.y;
+            size = snake.size;
+            snake.c.fillStyle = 'black';
+            snake.c.clearRect(0,0,window.innerWidth,window.innerHeight);
+            snake.c.fillStyle = `rgb(0,${50 + x * (155/snake.w)},${150 + y * (105/snake.h)})`
+            snake.c.fillRect(x,y,size,size);
+        },
+}
 
-    window.requestAnimationFrame(draw);
-
-    function draw(){
-        // clear screen
-        c.fillStyle = "black";
-        c.fillRect(0,0,w,h);
-
-        // change position
-        x += dX * speed;
-        y += dY * speed;
-
-        // CHECK BORDER
-        // check x
-        if (x < -size) x = w;
-        if (x > w) x = -size;
-
-        // check y
-        if (y < -size) y = h;
-        if (y > h) y = -size;
-
-        // draw snake
-        c.fillStyle = `rgb(0,${50 + x * (155/w)},${150 + y * (105/h)})`
-        c.fillRect(x,y,size,size);
-
-        window.requestAnimationFrame(draw);
-    }
-
-    // CONTROLS
-    window.addEventListener("keydown", (e) => {
-        switch(e.key){
-            case "ArrowLeft":
-                dX = -1;
-                dY = 0;
-                break;
-            case "ArrowUp":
-                dX = 0;
-                dY = -1;
-                break;
-            case "ArrowRight":
-                dX = 1;
-                dY = 0;
-                break;
-            case "ArrowDown":
-                dX = 0;
-                dY = 1;
-        }
-    })
-
-
-    // for (let i = 0; i < w; i += 100){
-    //     for (let j = 0; j < h; j += 100){
-    //         c.fillStyle = `rgb(0,${50 + i * (155/w)},${150 + j * (105/h)})`
-    //         c.fillRect(i,j,100,100)
-    //     }
-    // }
-
-
+snake.setup();
 
 </script>
 
